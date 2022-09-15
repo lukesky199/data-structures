@@ -31,7 +31,14 @@ T sum(stack<T>& s)
 {
 
     // Your code here
-    return T(); // stub return value (0 for primitive types). Change this!
+    if (s.empty()) return T(); // Base Case
+    T temp = s.top();
+    s.pop();
+
+    T return_sum = sum(s) + temp;
+    s.push(temp);
+
+    return return_sum;
                 // Note: T() is the default value for objects, and 0 for
                 // primitive types
 }
