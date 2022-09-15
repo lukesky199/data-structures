@@ -62,9 +62,22 @@ T sum(stack<T>& s)
  */
 bool isBalanced(queue<char> input)
 {
-
-    // @TODO: Make less optimistic
-    return true;
+    stack<char> brac;
+    while (!input.empty()) {
+        if (input.front() == '[' || input.front() == ']') {
+            if (brac.empty()) {
+                brac.push(input.front());
+            } else if (brac.top() == input.front()) {
+                brac.push(input.front());
+            } else if (brac.top() == '[' && input.front() == ']') {
+                brac.pop();
+            } else {
+                return false;
+            }
+        }
+        input.pop();
+    }
+    return brac.empty();
 }
 
 /**
