@@ -4,6 +4,7 @@
 #include "StickerSheet.h"
 #include "cs225/PNG.h"
 #include "cs225/HSLAPixel.h"
+#include <iostream>
 
 using namespace cs225;
 
@@ -87,6 +88,9 @@ TEST_CASE("StickerSheet::changeMaxStickers() discards stickers beyond the end of
   sheet.addSticker(i, 40, 200);
   sheet.addSticker(i, 60, 200);
   sheet.changeMaxStickers(1);
+
+  std::cout << sheet.getStickers().size() << std::endl;
+  sheet.render().writeToFile("./render-1.png");
 
   REQUIRE( sheet.render() == expected );
 }

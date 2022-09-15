@@ -46,6 +46,11 @@ class Allocator
      */
     void printRooms(std::ostream & stream = std::cout);
 
+    ~Allocator() {
+      delete[] alpha;
+      delete[] rooms;
+    }
+
   private:
     /**
      * Creates the array of letters.
