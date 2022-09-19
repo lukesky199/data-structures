@@ -99,8 +99,34 @@ template <typename T>
 void scramble(queue<T>& q)
 {
     stack<T> s;
-    // optional: queue<T> q2;
+    queue<T> q2;
+    unsigned block = 1;
 
     // Your code here
+    while (!q.empty()) {
+        if (block % 2 == 0) {
+            if (block > q.size()) { // Edge case
+                block = q.size();
+            }
+            for (unsigned i = 0; i < block; i++) {
+                s.push(q.front());
+                q.pop();
+            }
+            for (unsigned i = 0; i < block; i++) {
+                q2.push(s.top());
+                s.pop();
+            }
+        } else {
+            if (block > q.size()) { // Edge case
+                block = q.size();
+            }
+            for (unsigned i = 0; i < block; i++) {
+                q2.push(q.front());
+                q.pop();
+            }
+        }
+        block++;
+    }
+    q = q2;
 }
 }
