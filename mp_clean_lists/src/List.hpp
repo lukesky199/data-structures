@@ -26,7 +26,7 @@ typename List<T>::ListIterator List<T>::begin() const {
 template <typename T>
 typename List<T>::ListIterator List<T>::end() const {
   // @TODO: graded in MP3.1
-  return List<T>::ListIterator(++tail_->next);
+  return List<T>::ListIterator(tail_->next);
 }
 
 
@@ -44,6 +44,7 @@ void List<T>::_destroy() {
     next = head_->next;
   }
   tail_ = nullptr;
+  length_ = 0;
 }
 
 /**
