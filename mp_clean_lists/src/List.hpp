@@ -37,7 +37,7 @@ typename List<T>::ListIterator List<T>::end() const {
 template <typename T>
 void List<T>::_destroy() {
   /// @todo Graded in MP3.1
-  List<T>::ListNode* next = head_->next;
+  ListNode* next = head_->next;
   while (head_ != nullptr) {
     delete head_;
     head_ = next;
@@ -95,8 +95,6 @@ void List<T>::insertBack(const T & ndata) {
   tail_ = newNode;
 
   length_++;
-
-  /// @todo Graded in MP3.1
 }
 
 /**
@@ -129,7 +127,7 @@ typename List<T>::ListNode * List<T>::split(ListNode * start, int splitPoint) {
       curr->prev = NULL;
   }
 
-  return NULL;
+  return curr;
 }
 
 /**
@@ -145,7 +143,28 @@ typename List<T>::ListNode * List<T>::split(ListNode * start, int splitPoint) {
 template <typename T>
 void List<T>::tripleRotate() {
   // @todo Graded in MP3.1
+  ListNode curr = head_;
+  for (int i = 0; length_ - i >= 3; i+= 3) {
+    ListNode* rotated = curr;
+    curr = curr->next;
+    ListNode* new_right = curr;
+    if (i == 0) // head_ edgecase
+      head_ = new_right;
+    
+    curr = curr->next;
+    rotated->next = curr->next; // Setting up ->next
+    curr->next = rotated;
 
+    new_right->prev = rotated->prev; // Setting up ->prev
+    rotated->prev = curr;
+
+    curr = curr->next; // setting up for the next triple
+    if (curr == nullptr) { // tail_ edgecase
+      tail_ = rotated;
+    } else {
+      curr->prev = rotated;
+    }
+  }
 }
 
 
