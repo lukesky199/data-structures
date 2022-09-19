@@ -17,7 +17,7 @@ List<T>::List() {
 template <typename T>
 typename List<T>::ListIterator List<T>::begin() const {
   // @TODO: graded in MP3.1
-  return List<T>::ListIterator(NULL);
+  return List<T>::ListIterator(head_);
 }
 
 /**
@@ -26,7 +26,7 @@ typename List<T>::ListIterator List<T>::begin() const {
 template <typename T>
 typename List<T>::ListIterator List<T>::end() const {
   // @TODO: graded in MP3.1
-  return List<T>::ListIterator(NULL);
+  return List<T>::ListIterator(++tail_->next);
 }
 
 
@@ -37,6 +37,13 @@ typename List<T>::ListIterator List<T>::end() const {
 template <typename T>
 void List<T>::_destroy() {
   /// @todo Graded in MP3.1
+  List<T>::ListNode* next = head_->next;
+  while (head_ != nullptr) {
+    delete head_;
+    head_ = next;
+    next = head_->next;
+  }
+  tail_ = nullptr;
 }
 
 /**
@@ -121,6 +128,7 @@ typename List<T>::ListNode * List<T>::split(ListNode * start, int splitPoint) {
 template <typename T>
 void List<T>::tripleRotate() {
   // @todo Graded in MP3.1
+
 }
 
 
