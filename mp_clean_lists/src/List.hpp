@@ -8,6 +8,7 @@ List<T>::List() {
   // @TODO: graded in MP3.1
     head_ = NULL;
     tail_ = NULL;
+    length_ = 0;
 }
 
 /**
@@ -26,6 +27,9 @@ typename List<T>::ListIterator List<T>::begin() const {
 template <typename T>
 typename List<T>::ListIterator List<T>::end() const {
   // @TODO: graded in MP3.1
+  if (tail_ == NULL) 
+    return List<T>::ListIterator(NULL);
+
   return List<T>::ListIterator(tail_->next);
 }
 
@@ -37,13 +41,13 @@ typename List<T>::ListIterator List<T>::end() const {
 template <typename T>
 void List<T>::_destroy() {
   /// @todo Graded in MP3.1
-  ListNode* next = head_->next;
-  while (head_ != nullptr) {
+  ListNode* next;
+  while (head_ != NULL) {
+    next = head_->next;
     delete head_;
     head_ = next;
-    next = head_->next;
   }
-  tail_ = nullptr;
+  tail_ = NULL;
   length_ = 0;
 }
 
@@ -118,12 +122,13 @@ typename List<T>::ListNode * List<T>::split(ListNode * start, int splitPoint) {
   /// @todo Graded in MP3.1
   ListNode * curr = start;
 
-  for (int i = 0; i < splitPoint || curr != NULL; i++) {
+  for (int i = 0; i < splitPoint && curr != NULL; i++) {
     curr = curr->next;
   }
 
   if (curr != NULL) {
-      curr->prev->next = NULL;
+      if (curr->prev != NULL)
+        curr->prev->next = NULL;
       curr->prev = NULL;
   }
 
@@ -143,8 +148,8 @@ typename List<T>::ListNode * List<T>::split(ListNode * start, int splitPoint) {
 template <typename T>
 void List<T>::tripleRotate() {
   // @todo Graded in MP3.1
-  ListNode curr = head_;
-  for (int i = 0; length_ - i >= 3; i+= 3) {
+  ListNode* curr = head_;
+  for (int i = 0; length_ - i >= 3; i+= 3) { //i = 3, length_ - i = 3
     ListNode* rotated = curr;
     curr = curr->next;
     ListNode* new_right = curr;
@@ -156,10 +161,12 @@ void List<T>::tripleRotate() {
     curr->next = rotated;
 
     new_right->prev = rotated->prev; // Setting up ->prev
+    if (rotated->prev != NULL)
+      rotated->prev->next = new_right;
     rotated->prev = curr;
 
-    curr = curr->next; // setting up for the next triple
-    if (curr == nullptr) { // tail_ edgecase
+    curr = rotated->next; // setting up for the next triple
+    if (curr == NULL) { // tail_ edgecase
       tail_ = rotated;
     } else {
       curr->prev = rotated;
