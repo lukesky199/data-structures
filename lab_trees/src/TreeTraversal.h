@@ -113,7 +113,7 @@ class TreeTraversal {
         /**
          * Public pure virtual add() function
          *
-         * @param treeNode The current Node to be processed
+         * @param treeNode The current Node to be   cessed
          */
         virtual void add(typename BinaryTree<T>::Node*& treeNode) = 0;
 

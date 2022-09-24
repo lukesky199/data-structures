@@ -5,6 +5,7 @@
  */
 #include "InorderTraversal.h"
 #include <iostream>
+#include <algorithm>
 
 /**
  * @return The height of the binary tree. Recall that the height of a binary
@@ -75,10 +76,18 @@ void BinaryTree<T>::printLeftToRight(const Node* subRoot) const
  * Flips the tree over a vertical axis, modifying the tree itself
  *  (not creating a flipped copy).
  */
-    template <typename T>
+template <typename T>
 void BinaryTree<T>::mirror()
 {
-    //your code here
+    mirror(root);
+}
+
+template <typename T>
+void BinaryTree<T>::mirror(Node* subRoot) {
+    if (subRoot == nullptr) return;
+    std::swap(subRoot->left, subRoot->right);
+    mirror(subRoot->left);
+    mirror(subRoot->right);
 }
 
 
@@ -91,8 +100,15 @@ void BinaryTree<T>::mirror()
 template <typename T>
 bool BinaryTree<T>::isOrderedIterative() const
 {
-    // your code here
-    return false;
+    InorderTraversal<int> iot(root);
+    int prev = std::numeric_limits<int>::min();
+    for (TreeTraversal<int>::Iterator it = iot.begin(); it != iot.end(); ++it) {
+        if (prev > (*it)->elem) {
+            return false;
+        }
+        prev = (*it)->elem;
+    }
+    return true;
 }
 
 /**
@@ -104,7 +120,51 @@ bool BinaryTree<T>::isOrderedIterative() const
 template <typename T>
 bool BinaryTree<T>::isOrderedRecursive() const
 {
-    // your code here
-    return false;
+    return isOrderedRecursive(root);
+}
+
+template <typename T>
+bool BinaryTree<T>::isOrderedRecursive(const Node* subRoot) const
+{
+    if (subRoot == NULL) {
+        return true;
+    }
+    if (!isOrderedRecursive(subRoot->left) || !isOrderedRecursive(subRoot->right)) {
+        return false;
+    }
+    return treeMax(subRoot->left) < subRoot->elem && subRoot->elem < treeMin(subRoot->right);
+
+}
+
+template <typename T>
+int BinaryTree<T>::treeMax(const Node* subRoot) const {
+    if (subRoot == NULL)
+        return std::numeric_limits<int>::min();
+    int rootVal = subRoot->elem;
+    int lVal = treeMax(subRoot-> left);
+    int rVal = treeMax(subRoot-> right);
+    if (lVal > rootVal) {
+        rootVal = lVal;
+    }
+    if (rVal > rootVal) {
+        rootVal = rVal;
+    }
+    return rootVal;
+}
+
+template <typename T>
+int BinaryTree<T>::treeMin(const Node* subRoot) const {
+    if (subRoot == NULL)
+        return std::numeric_limits<int>::max();
+    int rootVal = subRoot->elem;
+    int lVal = treeMin(subRoot-> left);
+    int rVal = treeMin(subRoot-> right);
+    if (lVal < rootVal) {
+        rootVal = lVal;
+    }
+    if (rVal < rootVal) {
+        rootVal = rVal;
+    }
+    return rootVal;
 }
 

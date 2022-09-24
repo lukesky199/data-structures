@@ -55,11 +55,11 @@ class PreorderTraversal : public TreeTraversal<T> {
          * @param treeNode The subroot whose children should be added
          */
         void add(typename BinaryTree<T>::Node *& treeNode) {
-            if (treeNode->right != NULL) {
-                stack.push(treeNode->right);
-            }	
             if (treeNode->left != NULL) { 
                 stack.push(treeNode->left);
+            }
+            if (treeNode->right != NULL) {
+                stack.push(treeNode->right);
             }
         }
 

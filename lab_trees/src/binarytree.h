@@ -156,6 +156,13 @@ class BinaryTree
          * Look at the private helpers for height and printLeftToRight
          *  as examples.
          */
+        void mirror(Node* subRoot);
+
+        bool isOrderedRecursive(const Node* subRoot) const;
+
+        int treeMax(const Node* subRoot) const;
+
+        int treeMin(const Node* subRoot) const;
 
         /**
          * Private helper function for the public height function.
