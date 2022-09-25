@@ -197,8 +197,30 @@ void List<T>::reverse() {
 template <typename T>
 void List<T>::reverse(ListNode *& startPoint, ListNode *& endPoint) {
   /// @todo Graded in MP3.2
+  if (startPoint == endPoint) { return; } //If nullptr or only 1 node
+  ListNode* startPrev = startPoint->prev;
+  ListNode* endNext = endPoint->next;
+  ListNode* current = startPoint;
+  ListNode* tmp = nullptr;
+
+  while (current != endPoint) {
+    tmp = current->prev;
+    current->prev = current->next;
+    current->next = tmp;
+    current = current->prev;
+  }
+  tmp = current->prev;
+  current->prev = startPrev;
+  current->next = tmp;
+
+  if(tmp != nullptr) {
+    endPoint = startPoint;
+    startPoint = tmp->prev;
+    endPoint->next = endNext;
+  }
 }
 
+#include <iostream>
 /**
  * Reverses blocks of size n in the current List. You should use your
  * reverse( ListNode * &, ListNode * & ) helper function in this method!
@@ -208,6 +230,29 @@ void List<T>::reverse(ListNode *& startPoint, ListNode *& endPoint) {
 template <typename T>
 void List<T>::reverseNth(int n) {
   /// @todo Graded in MP3.2
+  ListNode* current = head_;
+  ListNode* start;
+  while (current != tail_) {
+    start = current;
+    for (int i = 0; i < n && current != tail_; i++) {
+      current = current->next;
+    }
+    if (start == head_) {
+      if (current == tail_) {
+        reverse(head_, tail_);
+        break;
+      } else {
+        reverse(head_, current->prev);
+      }
+    } else {
+      if (current == tail_) {
+        reverse(start->prev->next, tail_);
+        break;
+      } else {
+        reverse(start->prev->next, current->prev);
+      }
+    }
+  }
 }
 
 
