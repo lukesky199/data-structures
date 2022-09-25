@@ -280,6 +280,7 @@ void List<T>::mergeWith(List<T> & otherList) {
     otherList.length_ = 0;
 }
 
+#include <stack>
 /**
  * Helper function to merge two **sorted** and **independent** sequences of
  * linked memory. The result should be a single sequence that is itself
@@ -294,7 +295,63 @@ void List<T>::mergeWith(List<T> & otherList) {
 template <typename T>
 typename List<T>::ListNode * List<T>::merge(ListNode * first, ListNode* second) {
   /// @todo Graded in MP3.2
-  return NULL;
+  /*ListNode* res = nullptr;
+
+  if (first == nullptr) {
+    return second;
+  } else if (second == nullptr) {
+    return first;
+  }
+  if (first->data < second->data) {
+    res = first;
+    res->next = merge(first->next, second);
+  } else {
+    res = second;
+    res->next = merge(first, second->next);
+  }
+  return res;*/
+  if (first == nullptr && second == nullptr) {
+    return first;
+  }
+
+  ListNode* newHead = first;
+  ListNode* current = newHead->next;
+  stack<ListNode*> stack;
+
+  while (current != nullptr) {
+    // std::cout<< current->data << " ";
+    stack.push(current);
+    current = current->next;
+  }
+  // std::cout << std::endl;
+  current = second;
+  while (current != nullptr) {
+    stack.push(current);
+    current = current->next;
+  }
+  newHead->next = nullptr;
+  while (!stack.empty()) {
+    ListNode* insert = stack.top();
+    stack.pop();
+
+    if (insert->data < newHead->data) {
+      insert->next = newHead;
+      insert->prev = nullptr;
+      newHead->prev = insert;
+      newHead = insert;
+      continue;
+    }
+
+    current = newHead;
+    while (current->next != nullptr && current->next->data < insert->data) {
+      current = current->next;
+    }
+    insert->next = current->next;
+    insert->prev = current;
+    current->next = insert;
+  }
+
+  return newHead;
 }
 
 /**
@@ -311,5 +368,28 @@ typename List<T>::ListNode * List<T>::merge(ListNode * first, ListNode* second) 
 template <typename T>
 typename List<T>::ListNode* List<T>::mergesort(ListNode * start, int chainLength) {
   /// @todo Graded in MP3.2
-  return NULL;
+  if (chainLength == 1) {
+    return start;
+  }
+
+  ListNode* current = start;
+  for (int i = 0; i < chainLength/2; i++) {
+    // std::cout<< current->data << " ";
+    current = current->next;
+  }
+
+  // std::cout << std::endl;
+  current->prev->next = nullptr;
+  current->prev = nullptr;
+
+  // std::cout << __LINE__ << std::endl;
+  
+  ListNode* a = mergesort(start, chainLength/2);
+  ListNode* b = mergesort(current, chainLength - chainLength/2);
+
+  // std::cout << __LINE__ << std::endl;
+  ListNode* newHead = merge(a, b);
+  // std::cout << __LINE__ << std::endl;
+
+  return newHead;
 }
