@@ -39,12 +39,12 @@ class ListIterator : public std::iterator<std::bidirectional_iterator_tag, T> {
         return ListIterator(temp);
     }
 
-    bool operator!=(const ListIterator& rhs) {
+    bool operator!=(const ListIterator& rhs) const {
         // @TODO: graded in MP3.1
         return !(this->position_ == rhs.position_);
     }
 
-    bool operator==(const ListIterator& rhs) {
+    bool operator==(const ListIterator& rhs) const {
         return !(*this != rhs);
     }
 

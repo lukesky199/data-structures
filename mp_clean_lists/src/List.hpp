@@ -31,6 +31,7 @@ typename List<T>::ListIterator List<T>::end() const {
     return List<T>::ListIterator(NULL);
 
   return List<T>::ListIterator(tail_->next);
+  // return List<T>::ListIterator(tail_, 0);
 }
 
 
@@ -295,44 +296,19 @@ void List<T>::mergeWith(List<T> & otherList) {
 template <typename T>
 typename List<T>::ListNode * List<T>::merge(ListNode * first, ListNode* second) {
   /// @todo Graded in MP3.2
-  /*ListNode* res = nullptr;
-
   if (first == nullptr) {
     return second;
   } else if (second == nullptr) {
     return first;
   }
-  if (first->data < second->data) {
-    res = first;
-    res->next = merge(first->next, second);
-  } else {
-    res = second;
-    res->next = merge(first, second->next);
-  }
-  return res;*/
-  if (first == nullptr && second == nullptr) {
-    return first;
-  }
 
   ListNode* newHead = first;
-  ListNode* current = newHead->next;
-  stack<ListNode*> stack;
-
+  ListNode* current = second;
+  ListNode* iter = newHead;
+  
   while (current != nullptr) {
-    // std::cout<< current->data << " ";
-    stack.push(current);
+    ListNode* insert = current;
     current = current->next;
-  }
-  // std::cout << std::endl;
-  current = second;
-  while (current != nullptr) {
-    stack.push(current);
-    current = current->next;
-  }
-  newHead->next = nullptr;
-  while (!stack.empty()) {
-    ListNode* insert = stack.top();
-    stack.pop();
 
     if (insert->data < newHead->data) {
       insert->next = newHead;
@@ -342,13 +318,24 @@ typename List<T>::ListNode * List<T>::merge(ListNode * first, ListNode* second) 
       continue;
     }
 
-    current = newHead;
-    while (current->next != nullptr && current->next->data < insert->data) {
-      current = current->next;
+    while (iter->next != nullptr && iter->next->data < insert->data) {
+      iter = iter->next;
     }
-    insert->next = current->next;
-    insert->prev = current;
-    current->next = insert;
+    if (insert->data < iter->data) {
+      iter->prev->next = insert;
+      insert->prev = iter->prev;
+      iter->prev = insert;
+      insert->next = iter;
+    } else if (iter->next == nullptr) {
+      iter->next = insert;
+      insert->prev = iter;
+      insert->next = nullptr;
+    } else {
+      insert->next = iter->next;
+      iter->next->prev = insert;
+      insert->prev = iter;
+      iter->next = insert;
+    }
   }
 
   return newHead;
