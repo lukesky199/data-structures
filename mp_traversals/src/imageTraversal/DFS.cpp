@@ -21,8 +21,12 @@
  * @param tolerance If the current point is too different (difference larger than tolerance) with the start point,
  * it will not be included in this DFS
  */
-DFS::DFS(const PNG & png, const Point & start, double tolerance) {  
+DFS::DFS(const PNG & png, const Point & start, double tolerance) {
   /** @todo [Part 1] */
+  image = png;
+  startP = start;
+  tol = tolerance;
+  add(start);
 }
 
 /**
@@ -46,6 +50,28 @@ ImageTraversal::Iterator DFS::end() {
  */
 void DFS::add(const Point & point) {
   /** @todo [Part 1] */
+  HSLAPixel p1 = image.getPixel(point.x, point.y);
+
+  if (point.x + 1 < image.width()) { // Right
+    if (calculateDelta(p1, image.getPixel(point.x + 1, point.y)) > tol) {
+      stack.push(Point(point.x + 1, point.y));
+    }
+  }
+  if (point.y + 1 < image.height()) { // Down
+    if (calculateDelta(p1, image.getPixel(point.x, point.y + 1)) > tol) {
+      stack.push(Point(point.x, point.y + 1));
+    }
+  }
+  if (point.x - 1 >= 0) { // Left
+    if (calculateDelta(p1, image.getPixel(point.x - 1, point.y)) > tol) {
+      stack.push(Point(point.x - 1, point.y));
+    }
+  }
+  if (point.y - 1 >= 0) { // Up
+    if (calculateDelta(p1, image.getPixel(point.x, point.y - 1)) > tol) {
+      stack.push(Point(point.x, point.y - 1));
+    }
+  }
 }
 
 /**
@@ -53,7 +79,9 @@ void DFS::add(const Point & point) {
  */
 Point DFS::pop() {
   /** @todo [Part 1] */
-  return Point(0, 0);
+  Point popped(stack.top().x, stack.top().y);
+  stack.pop();
+  return popped;
 }
 
 /**
@@ -61,7 +89,8 @@ Point DFS::pop() {
  */
 Point DFS::peek() const {
   /** @todo [Part 1] */
-  return Point(0, 0);
+  Point peeked(stack.top().x, stack.top().y);
+  return peeked;
 }
 
 /**
@@ -69,5 +98,5 @@ Point DFS::peek() const {
  */
 bool DFS::empty() const {
   /** @todo [Part 1] */
-  return true;
+  return stack.empty();
 }

@@ -35,4 +35,8 @@ public:
 private:
 	/** @todo [Part 1] */
 	/** add private members here*/
+  std::stack<Point> stack;
+  PNG image;
+  Point startP;
+  double tol;
 };

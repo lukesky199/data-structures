@@ -24,6 +24,10 @@ using namespace cs225;
  */
 BFS::BFS(const PNG & png, const Point & start, double tolerance) {  
   /** @todo [Part 1] */
+  image = png;
+  startP = start;
+  tol = tolerance;
+  add(start);
 }
 
 /**
@@ -47,6 +51,28 @@ ImageTraversal::Iterator BFS::end() {
  */
 void BFS::add(const Point & point) {
   /** @todo [Part 1] */
+  HSLAPixel p1 = image.getPixel(point.x, point.y);
+
+  if (point.x + 1 < image.width()) { // Right
+    if (calculateDelta(p1, image.getPixel(point.x + 1, point.y)) > tol) {
+      queue.push(Point(point.x + 1, point.y));
+    }
+  }
+  if (point.y + 1 < image.height()) { // Down`
+    if (calculateDelta(p1, image.getPixel(point.x, point.y + 1)) > tol) {
+      queue.push(Point(point.x, point.y + 1));
+    }
+  }
+  if (point.x - 1 >= 0) { // Left
+    if (calculateDelta(p1, image.getPixel(point.x - 1, point.y)) > tol) {
+      queue.push(Point(point.x - 1, point.y));
+    }
+  }
+  if (point.y - 1 >= 0) { // Up
+    if (calculateDelta(p1, image.getPixel(point.x, point.y - 1)) > tol) {
+      queue.push(Point(point.x, point.y - 1));
+    }
+  }
 }
 
 /**
