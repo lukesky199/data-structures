@@ -44,6 +44,16 @@ class AVLTree
     };
 
   public:
+
+    // Update height of node
+    void updateHeight(Node*& t);
+
+    // Return balance of Node;
+    int getBalance(Node*& t);
+
+    // Handles removing a node with two children
+    void removeTwoChild(Node*& subtree, Node*& parent, Node* current);
+
     /**
      * Constructor to create an empty tree.
      */
