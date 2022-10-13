@@ -342,8 +342,37 @@ template <class T, class C>
 size_t insertion_idx(const std::vector<T>& elements, const C& val)
 {
     /* TODO Your code goes here! */
+    if (elements.empty()) // empty case
+        return 0;
+    if (elements[0] > val || elements[0] == val) // insertFront
+        return 0;
+    if (elements[elements.size() - 1] < val) // insertBack
+        return elements.size();
 
-    return 5;
+    // insertMiddle
+    size_t idx = elements.size() / 2;
+    int block_size = elements.size() / 2;
+    while (block_size != 0) {
+        if (elements[idx] == val) {
+            return idx;
+        }
+        if (elements[idx] == val || (elements[idx] > val && elements[idx - 1] < val)) {
+            return idx;
+        }
+        block_size = block_size / 2;
+        if (elements[idx] > val) {
+            if (block_size == 0) {
+                idx--;
+            }
+            idx -= block_size;
+        } else {
+            if (block_size == 0) {
+                idx++;
+            }
+            idx += block_size;
+        }
+    }
+    return idx;
 }
 
 #include "btree_given.hpp"

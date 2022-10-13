@@ -57,6 +57,11 @@ TEST_CASE("test_insertion_idx_small", "[weight=5][timeout=8000]") {
     std::vector<int> data = { 1, 3, 5, 7 };
     REQUIRE(0 == insertion_idx(data, -1));
     REQUIRE(0 == insertion_idx(data, 1));
+    REQUIRE(1 == insertion_idx(data, 2));
+    REQUIRE(1 == insertion_idx(data, 3));
+    REQUIRE(2 == insertion_idx(data, 4));;
+    REQUIRE(2 == insertion_idx(data, 5));
+    REQUIRE(3 == insertion_idx(data, 6));
     REQUIRE(4 == insertion_idx(data, 99));
 }
 
