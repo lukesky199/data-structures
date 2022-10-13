@@ -5,6 +5,7 @@
 #include <queue>
 #include <stack>
 #include <vector>
+#include <chrono>
 
 #include "cs225/PNG.h"
 #include "../Point.h"
@@ -25,9 +26,18 @@ using namespace cs225;
 BFS::BFS(const PNG & png, const Point & start, double tolerance) {  
   /** @todo [Part 1] */
   image = png;
-  startP = start;
+  startPoint = start;
   tol = tolerance;
   add(start);
+}
+
+BFS::BFS(const PNG & png, const Point & start, double tolerance, bool noStart) {  
+  /** @todo [Part 1] */
+  image = png;
+  startPoint = start;
+  tol = tolerance;
+  if (noStart)
+    add(start);
 }
 
 /**
@@ -35,7 +45,8 @@ BFS::BFS(const PNG & png, const Point & start, double tolerance) {
  */
 ImageTraversal::Iterator BFS::begin() {
   /** @todo [Part 1] */
-  return ImageTraversal::Iterator();
+  std::unique_ptr<ImageTraversal> temp = std::make_unique<BFS>(BFS(image, startPoint, tol));
+  return ImageTraversal::Iterator(move(temp), image, startPoint, tol);
 }
 
 /**
@@ -43,7 +54,14 @@ ImageTraversal::Iterator BFS::begin() {
  */
 ImageTraversal::Iterator BFS::end() {
   /** @todo [Part 1] */
-  return ImageTraversal::Iterator();
+  auto start = std::chrono::steady_clock::now();
+  std::unique_ptr<ImageTraversal> temp = std::make_unique<BFS>(BFS(image, startPoint, tol));
+  while (!temp.get()->empty()) {
+    temp.get()->pop();
+  }
+  return ImageTraversal::Iterator(move(temp), image, startPoint, tol);
+  auto end = std::chrono::steady_clock::now();
+  std::cout << std::chrono::duration<double, std::milli>(end - start).count() << std::endl;
 }
 
 /**
@@ -51,28 +69,7 @@ ImageTraversal::Iterator BFS::end() {
  */
 void BFS::add(const Point & point) {
   /** @todo [Part 1] */
-  HSLAPixel p1 = image.getPixel(point.x, point.y);
-
-  if (point.x + 1 < image.width()) { // Right
-    if (calculateDelta(p1, image.getPixel(point.x + 1, point.y)) > tol) {
-      queue.push(Point(point.x + 1, point.y));
-    }
-  }
-  if (point.y + 1 < image.height()) { // Down`
-    if (calculateDelta(p1, image.getPixel(point.x, point.y + 1)) > tol) {
-      queue.push(Point(point.x, point.y + 1));
-    }
-  }
-  if (point.x - 1 >= 0) { // Left
-    if (calculateDelta(p1, image.getPixel(point.x - 1, point.y)) > tol) {
-      queue.push(Point(point.x - 1, point.y));
-    }
-  }
-  if (point.y - 1 >= 0) { // Up
-    if (calculateDelta(p1, image.getPixel(point.x, point.y - 1)) > tol) {
-      queue.push(Point(point.x, point.y - 1));
-    }
-  }
+  queue.push(point);
 }
 
 /**
@@ -80,7 +77,9 @@ void BFS::add(const Point & point) {
  */
 Point BFS::pop() {
   /** @todo [Part 1] */
-  return Point(0, 0);
+  Point popped(queue.front().x, queue.front().y);
+  queue.pop();
+  return popped;
 }
 
 /**
@@ -88,7 +87,7 @@ Point BFS::pop() {
  */
 Point BFS::peek() const {
   /** @todo [Part 1] */
-  return Point(0, 0);
+  return Point(queue.front().x, queue.front().y);
 }
 
 /**
@@ -96,5 +95,5 @@ Point BFS::peek() const {
  */
 bool BFS::empty() const {
   /** @todo [Part 1] */
-  return true;
+  return queue.empty();
 }

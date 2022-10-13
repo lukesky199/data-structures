@@ -24,7 +24,7 @@
 DFS::DFS(const PNG & png, const Point & start, double tolerance) {
   /** @todo [Part 1] */
   image = png;
-  startP = start;
+  startPoint = start;
   tol = tolerance;
   add(start);
 }
@@ -34,7 +34,8 @@ DFS::DFS(const PNG & png, const Point & start, double tolerance) {
  */
 ImageTraversal::Iterator DFS::begin() {
   /** @todo [Part 1] */
-  return ImageTraversal::Iterator();
+  std::unique_ptr<ImageTraversal> temp = std::make_unique<DFS>(DFS(image, startPoint, tol));
+  return ImageTraversal::Iterator(move(temp), image, startPoint, tol);
 }
 
 /**
@@ -42,7 +43,11 @@ ImageTraversal::Iterator DFS::begin() {
  */
 ImageTraversal::Iterator DFS::end() {
   /** @todo [Part 1] */
-  return ImageTraversal::Iterator();
+  std::unique_ptr<ImageTraversal> temp = std::make_unique<DFS>(DFS(image, startPoint, tol));
+  while (!temp.get()->empty()) {
+    temp.get()->pop();
+  }
+  return ImageTraversal::Iterator(move(temp), image, startPoint, tol);
 }
 
 /**
@@ -50,28 +55,7 @@ ImageTraversal::Iterator DFS::end() {
  */
 void DFS::add(const Point & point) {
   /** @todo [Part 1] */
-  HSLAPixel p1 = image.getPixel(point.x, point.y);
-
-  if (point.x + 1 < image.width()) { // Right
-    if (calculateDelta(p1, image.getPixel(point.x + 1, point.y)) > tol) {
-      stack.push(Point(point.x + 1, point.y));
-    }
-  }
-  if (point.y + 1 < image.height()) { // Down
-    if (calculateDelta(p1, image.getPixel(point.x, point.y + 1)) > tol) {
-      stack.push(Point(point.x, point.y + 1));
-    }
-  }
-  if (point.x - 1 >= 0) { // Left
-    if (calculateDelta(p1, image.getPixel(point.x - 1, point.y)) > tol) {
-      stack.push(Point(point.x - 1, point.y));
-    }
-  }
-  if (point.y - 1 >= 0) { // Up
-    if (calculateDelta(p1, image.getPixel(point.x, point.y - 1)) > tol) {
-      stack.push(Point(point.x, point.y - 1));
-    }
-  }
+  stack.push(point);
 }
 
 /**
@@ -89,8 +73,7 @@ Point DFS::pop() {
  */
 Point DFS::peek() const {
   /** @todo [Part 1] */
-  Point peeked(stack.top().x, stack.top().y);
-  return peeked;
+  return stack.top();
 }
 
 /**

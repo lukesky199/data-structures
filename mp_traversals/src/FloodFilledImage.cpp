@@ -1,6 +1,8 @@
 #include "cs225/PNG.h"
 #include <list>
 #include <iostream>
+#include <utility>
+#include <chrono>
 
 #include "colorPicker/ColorPicker.h"
 #include "imageTraversal/ImageTraversal.h"
@@ -18,6 +20,7 @@ using namespace cs225;
  */
 FloodFilledImage::FloodFilledImage(const PNG & png) {
   /** @todo [Part 2] */
+  image_ = png;
 }
 
 /**
@@ -29,6 +32,8 @@ FloodFilledImage::FloodFilledImage(const PNG & png) {
  */
 void FloodFilledImage::addFloodFill(ImageTraversal & traversal, ColorPicker & colorPicker) {
   /** @todo [Part 2] */
+  std::pair<ImageTraversal&, ColorPicker&> floodFill(traversal, colorPicker);
+  floodFills.push_back(floodFill);
 }
 
 /**
@@ -53,5 +58,26 @@ void FloodFilledImage::addFloodFill(ImageTraversal & traversal, ColorPicker & co
 Animation FloodFilledImage::animate(unsigned frameInterval) const {
   Animation animation;
   /** @todo [Part 2] */
+  PNG image = image_;
+  for (std::pair<ImageTraversal&, ColorPicker&> floodFill : floodFills) {
+    animation.addFrame(image);
+    ImageTraversal::Iterator itr = floodFill.first.begin();
+    auto end = floodFill.first.end();
+    while (itr != end) {
+      // auto start = std::chrono::steady_clock::now();
+      for (unsigned i = 0; i < frameInterval && itr != end; i++) {
+
+        Point point = *itr;
+        HSLAPixel color = floodFill.second.getColor(point.x, point.y);
+
+        HSLAPixel &pixel = image.getPixel(point.x, point.y);
+        pixel = color;
+        ++itr;
+      }
+      animation.addFrame(image);
+      // auto end = std::chrono::steady_clock::now();
+      // std::cout << std::chrono::duration<double, milli>(end - start).count() << std::endl;
+    }
+  }
   return animation;
 }

@@ -86,6 +86,7 @@ TEST_CASE("DFS visits all points within a tolerance", "[weight=1][part=1]") {
   for (const Point & p : t) {
     count++;
   }
+  REQUIRE( t.begin() != t.end() );
   REQUIRE( count == 4 );
 }
 
@@ -98,6 +99,7 @@ TEST_CASE("BFS visits all points within a tolerance", "[weight=1][part=1]") {
   for (const Point & p : t) {
     count++;
   }
+  REQUIRE( t.begin() != t.end());
   REQUIRE( count == 4 );
 }
 

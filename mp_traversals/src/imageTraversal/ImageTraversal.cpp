@@ -35,6 +35,17 @@ ImageTraversal::Iterator::Iterator() {
   /** @todo [Part 1] */
 }
 
+ImageTraversal::Iterator::Iterator(std::unique_ptr<ImageTraversal> setTraversal, const PNG & png, const Point & start, double tolerance) : 
+tol(tolerance), image(png) {
+  /** @todo [Part 1] */
+  traversal = move(setTraversal);
+  int width = image.width();
+  int height = image.height();
+  visited = std::vector<std::vector<bool>>(width, std::vector<bool>(height, false));
+  visited[start.x][start.y] = true;
+  pix = image.getPixel(start.x, start.y);
+}
+
 /**
  * Iterator increment opreator.
  *
@@ -42,6 +53,36 @@ ImageTraversal::Iterator::Iterator() {
  */
 ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
   /** @todo [Part 1] */
+  Point point = traversal.get()->pop();
+
+  HSLAPixel p1 = image.getPixel(point.x, point.y);
+  visited[point.x][point.y] = true;
+
+  if (point.x + 1 < image.width()) { // Right
+    if (!visited[point.x + 1][point.y] && calculateDelta(pix, image.getPixel(point.x + 1, point.y)) < tol) {
+      traversal.get()->add(Point(point.x + 1, point.y));
+    }
+  }
+  if (point.y + 1 < image.height()) { // Down
+    if (!visited[point.x][point.y + 1] && calculateDelta(pix, image.getPixel(point.x, point.y + 1)) < tol) {
+      traversal.get()->add(Point(point.x, point.y + 1));
+    }
+  }
+  if (point.x >= 1) { // Left
+    if (!visited[point.x - 1][point.y] && calculateDelta(pix, image.getPixel(point.x - 1, point.y)) < tol) {
+      traversal.get()->add(Point(point.x - 1, point.y));
+    }
+  }
+  if (point.y >= 1) { // Up
+    if (!visited[point.x][point.y - 1] && calculateDelta(pix, image.getPixel(point.x, point.y - 1)) < tol) {
+      traversal.get()->add(Point(point.x, point.y - 1));
+    }
+  }
+
+  while (!traversal->empty() && visited[traversal->peek().x][traversal.get()->peek().y]) {
+    traversal.get()->pop();
+  }
+
   return *this;
 }
 
@@ -52,7 +93,7 @@ ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
  */
 Point ImageTraversal::Iterator::operator*() {
   /** @todo [Part 1] */
-  return Point(0, 0);
+  return traversal->peek();
 }
 
 /**
@@ -60,8 +101,11 @@ Point ImageTraversal::Iterator::operator*() {
  *
  * Determines if two iterators are not equal.
  */
-bool ImageTraversal::Iterator::operator!=(const ImageTraversal::Iterator &other) {
+bool ImageTraversal::Iterator::operator!=(const ImageTraversal::Iterator &other) const {
   /** @todo [Part 1] */
-  return false;
+  if (traversal.get()->empty() == other.traversal.get()->empty() && tol == other.tol && image == other.image) {
+    return false;
+  }
+  return true;
 }
 

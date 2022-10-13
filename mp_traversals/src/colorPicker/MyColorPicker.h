@@ -4,6 +4,8 @@
 #include "cs225/HSLAPixel.h"
 #include "../Point.h"
 
+#include <random>
+
 using namespace cs225;
 
 /**
@@ -11,8 +13,9 @@ using namespace cs225;
  */
 class MyColorPicker : public ColorPicker {
 public:
+  MyColorPicker();
   HSLAPixel getColor(unsigned x, unsigned y);
 
 private:
-
-};
+  int hue;
+}; 

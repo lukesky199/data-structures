@@ -37,6 +37,6 @@ private:
 	/** add private members here*/
   std::stack<Point> stack;
   PNG image;
-  Point startP;
+  Point startPoint;
   double tol;
 };
