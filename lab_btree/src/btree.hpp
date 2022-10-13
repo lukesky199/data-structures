@@ -26,11 +26,17 @@ template <class K, class V>
 V BTree<K, V>::find(const BTreeNode* subroot, const K& key) const
 {
     /* TODO Finish this function */
+    if (subroot == nullptr) {
+        return v();
+    }
 
     size_t first_larger_idx = insertion_idx(subroot->elements, key);
 
     /* If first_larger_idx is a valid index and the key there is the key we
      * are looking for, we are done. */
+    if (first_larger_idx < subroot->elements.size() && subroot->elements[first_larger_idx].key == key) {
+        return subroot->elements[first_larger_idx].value;
+    }
 
     /* Otherwise, we need to figure out which child to explore. For this we
      * can actually just use first_larger_idx directly. E.g.
@@ -42,8 +48,10 @@ V BTree<K, V>::find(const BTreeNode* subroot, const K& key) const
      * a leaf and we didn't find the key in it, then we have failed to find it
      * anywhere in the tree and return the default V.
      */
-
-    return V();
+    if (subroot->is_leaf) {
+        return V();
+    }
+    return find(subroot->children[insertion_idx], key);
 }
 
 /**
@@ -141,6 +149,14 @@ void BTree<K, V>::split_child(BTreeNode* parent, size_t child_idx)
 
 
     /* TODO Your code goes here! */
+    parent->elements.insert(elem_itr, *mid_elem_itr);
+
+    new_right->elements.assign(mid_elem_itr + 1, child->elements.end());
+    new_right->children.assign(mid_child_itr, child->children.begin());
+    parent->children.insert(child_itr, new_right);
+    
+    child->elements.erase(mid_elem_itr, child->elements.end());
+    child->children.erase(mid_child_itr, child->children.end());
 }
 
 /**
