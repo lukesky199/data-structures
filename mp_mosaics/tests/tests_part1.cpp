@@ -108,6 +108,56 @@ TEST_CASE("KDTree::shouldReplace Tests", "[weight=1][part=1]") {
 
 //   compareBinaryFiles(fname, "../tests/expected_kdtree_"+to_string(size)+".kd" );
 // }
+/*size_t partition(vector<int>& newPoints, int left, int right, int pivotIndex) {
+  int pivotValue = newPoints[pivotIndex];
+  std::swap(newPoints[pivotIndex], newPoints[right]);
+
+  size_t storeIndex = left;
+  for (int i = left; i < right; i++) {
+    if (newPoints[i] < pivotValue) {
+      std::swap(newPoints[storeIndex], newPoints[i]);
+      storeIndex++;
+    }
+  }
+  std::swap(newPoints[storeIndex], newPoints[right]);
+
+  return storeIndex;
+}
+
+TEST_CASE("Partition", "[weight=1][part=1]") {
+  vector<int> expected{5, 4, 2, 7, 1, 6, 3, 8, 9, 10};
+  vector<int> test{5, 4, 10, 2, 8, 1, 9, 6, 3, 7};
+  // std::cout << partition(test, 0, 9, 4) << std::endl;
+  for (int i = 0; i < 10; i++) {
+    REQUIRE(expected[i] == test[i]);
+  }
+}
+
+int quickselect(vector<int>& newPoints, int left, int right, int k) {
+  while (true) {
+    if (left >= right) {
+      return newPoints[left];
+    }
+    int pivotIndex = (left + right) / 2;
+    pivotIndex = partition(newPoints, left, right, pivotIndex);
+    // std::cout << "PIVOTINDEX: " << pivotIndex << std::endl;
+    if (k == pivotIndex) {
+      return newPoints[k];
+    } else if (k < pivotIndex) {
+      right = pivotIndex - 1;
+    } else {
+      left = pivotIndex + 1;
+    }
+  }
+}
+
+TEST_CASE("Quickselect", "[weight=1][part=1]") {
+  vector<int> test{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+  // std::cout << quickselect(test, 0, 9, 4) << std::endl;
+  for (int i = 0; i < 10; i++) {
+    REQUIRE(i == test[i]);
+  }
+}*/
 
 TEST_CASE("KDTree constructor, 1D (Dim=1)", "[weight=1][part=1]") {
   _test_linear_constructor<1>(10);
@@ -138,11 +188,11 @@ TEST_CASE("KDTree constructor, 3D (Dim = 3)", "[weight=1][part=1]") {
 //   }
 // }
 
-TEST_CASE("KDTree::findNearestNeighbor, exact match, 1D (Dim=1)", "[weight=1][part=1]") {
+TEST_CASE("KDTree::findNearestNeighbor, exact match 1D (Dim=1)", "[weight=1][part=1]") {
   _test_linear_nearestNeighbor<1>(10);
 }
 
-TEST_CASE("KDTree::findNearestNeighbor, exact match, 3D (Dim=3)", "[weight=1][part=1]") {
+TEST_CASE("KDTree::findNearestNeighbor, exact match 3D (Dim=3)", "[weight=1][part=1]") {
   _test_linear_nearestNeighbor<3>(31);
   }
 

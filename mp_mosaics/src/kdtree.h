@@ -154,7 +154,6 @@ class KDTree
      */
     KDTree(const vector<Point<Dim>>& newPoints);
 
-
     /**
      * Copy constructor for KDTree.
      *
@@ -261,6 +260,18 @@ class KDTree
     /**
      * @todo Add your helper functions here.
      */
+    size_t partition(vector<Point<Dim>>& newPoints, size_t dim, int left, int right, int pivotIndex);
+
+    Point<Dim> quickselect(vector<Point<Dim>>& newPoints, size_t dim, int left, int right, int k);
+
+    void buildTree(vector<Point<Dim>>& newPoints, size_t dim, int left, int right, KDTreeNode*& curRoot);
+
+    void clear(KDTreeNode* subroot);
+
+    KDTreeNode* copy(KDTreeNode* otherSubroot);
+
+    Point<Dim> findNearestNeighbor(const Point<Dim>& query, size_t dim, KDTreeNode* curRoot) const;
+
 };
 
 #include "kdtree.hpp"
