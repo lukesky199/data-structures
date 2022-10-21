@@ -348,31 +348,24 @@ size_t insertion_idx(const std::vector<T>& elements, const C& val)
         return 0;
     if (elements[elements.size() - 1] < val) // insertBack
         return elements.size();
-
-    // insertMiddle
-    size_t idx = elements.size() / 2;
-    int block_size = elements.size() / 2;
-    while (block_size != 0) {
-        if (elements[idx] == val) {
-            return idx;
+    
+    size_t low = 0;
+    size_t high = elements.size() - 1;
+    while (high != low) {
+        size_t mid = (low + high)/2;
+        if (val == elements[mid]) {
+            return mid;
         }
-        if (elements[idx] == val || (elements[idx] > val && elements[idx - 1] < val)) {
-            return idx;
+        if (mid > 0 && elements[mid - 1] < val && elements[mid] > val) {
+            return mid;
         }
-        block_size = block_size / 2;
-        if (elements[idx] > val) {
-            if (block_size == 0) {
-                idx--;
-            }
-            idx -= block_size;
+        if (val > elements[mid]) {
+            low = mid + 1;
         } else {
-            if (block_size == 0) {
-                idx++;
-            }
-            idx += block_size;
+            high = mid - 1;
         }
     }
-    return idx;
+    return (low + high)/2;
 }
 
 #include "btree_given.hpp"

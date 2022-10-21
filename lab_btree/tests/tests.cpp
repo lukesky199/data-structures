@@ -63,6 +63,8 @@ TEST_CASE("test_insertion_idx_small", "[weight=5][timeout=8000]") {
     REQUIRE(2 == insertion_idx(data, 5));
     REQUIRE(3 == insertion_idx(data, 6));
     REQUIRE(4 == insertion_idx(data, 99));
+    std::vector<int> data1 = { 5, 99};
+    REQUIRE(1 == insertion_idx(data1, 23));
 }
 
 size_t insertion_idx_time(std::vector< int >* vec) {
@@ -109,6 +111,7 @@ TEST_CASE("test_btree3_small", "[weight=5][valgrind][timeout=8000]") {
     BTree< int, int > b(3);
     do_inserts(data, b);
     verify_finds(data, b);
+
     REQUIRE(0 == b.find(-999));
     REQUIRE(b.is_valid(3));
 }
@@ -132,11 +135,11 @@ TEST_CASE("test_btree3_large_rand",  "[weight=5][timeout=8000]") {
 }
 
 TEST_CASE("test_btree64_large_seq",  "[weight=5][timeout=8000]") {
+    // auto data = make_int_data(100000, false);
     auto data = make_int_data(100000, false);
     BTree< int, int > b(64);
     do_inserts(data, b);
     verify_finds(data, b);
-    REQUIRE(0 == b.find(-9999));
     REQUIRE(b.is_valid(64));
 }
 
