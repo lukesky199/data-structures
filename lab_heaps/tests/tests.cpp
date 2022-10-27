@@ -133,6 +133,10 @@ TEST_CASE("test_build_heap_1", "[valgrind][weight=1]")
 	heap<int> myHeap(vals);
 	vector<int> test;
 	myHeap.getElems(test);
+    for (unsigned i = 0; i < test.size(); i++) {
+        std::cout << test[i] << ", ";
+    }
+    std::cout << std::endl;
 	vector<int> expected = {1, 2, 3};
 	bool matches = (test == expected);
 	REQUIRE(matches == true);
