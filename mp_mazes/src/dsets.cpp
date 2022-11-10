@@ -1,5 +1,6 @@
 /* Your code here! */
 #include "dsets.h"
+#include <iostream>
 
 void DisjointSets::addelements(int num) {
     for (int i = 0; i < num; i++) {
@@ -11,9 +12,6 @@ int DisjointSets::find(int elem) {
     if (elems_[elem] < 0) {
         return elem;
     }
-    /*if (elems_[elems_[elem]] < 0) {
-        return elems_[elem];
-    }*/
     elems_[elem] = find(elems_[elem]);
     return elems_[elem];
 }
@@ -21,6 +19,11 @@ int DisjointSets::find(int elem) {
 void DisjointSets::setunion (int a, int b) {
     int aRoot = find(a);
     int bRoot = find(b);
+    if (aRoot == bRoot) {
+        //bad union
+        std::cout << "bad union" << std::endl;
+        return;
+    }
     if (elems_[aRoot] <= elems_[bRoot]) {
         elems_[aRoot] += elems_[bRoot];
         elems_[bRoot] = aRoot;
