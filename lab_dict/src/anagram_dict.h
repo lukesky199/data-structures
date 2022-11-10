@@ -36,6 +36,8 @@ class AnagramDict
      */
     AnagramDict(const std::vector<std::string>& words);
 
+    bool isAnagram(std::string first, std::string second);
+
     /**
      * @param word The word used to find anagrams.
      * Gets all anagrams of a given word from the dictionary.

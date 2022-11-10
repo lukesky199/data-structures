@@ -10,6 +10,7 @@
 
 #include <algorithm> /* I wonder why this is included... */
 #include <fstream>
+#include <iostream>
 
 using std::string;
 using std::vector;
@@ -23,6 +24,22 @@ using std::ifstream;
 AnagramDict::AnagramDict(const string& filename)
 {
     /* Your code goes here! */
+    ifstream wordsFile(filename);
+    string word;
+    vector<string> words;
+    if (wordsFile.is_open()) {
+        /* Reads a line from `wordsFile` into `word` until the file ends. */
+        while (getline(wordsFile, word)) {
+            words.push_back(word);
+        }
+    }
+    for (string key : words) {
+        for (string word : words) {
+            if (isAnagram(key, word)) {
+                dict[key].push_back(word);
+            }
+        }
+    }
 }
 
 /**
@@ -32,6 +49,19 @@ AnagramDict::AnagramDict(const string& filename)
 AnagramDict::AnagramDict(const vector<string>& words)
 {
     /* Your code goes here! */
+    for (string key : words) {
+        for (string word : words) {
+            if (isAnagram(key, word)) {
+                dict[key].push_back(word);
+            }
+        }
+    }
+}
+
+bool AnagramDict::isAnagram(string first, string second) {
+    std::sort(first.begin(), first.end());
+    std::sort(second.begin(), second.end());
+    return first == second;
 }
 
 /**
@@ -43,6 +73,9 @@ AnagramDict::AnagramDict(const vector<string>& words)
 vector<string> AnagramDict::get_anagrams(const string& word) const
 {
     /* Your code goes here! */
+    auto it = dict.find(word);
+    if (it != dict.end())
+        return it->second;
     return vector<string>();
 }
 
@@ -55,5 +88,14 @@ vector<string> AnagramDict::get_anagrams(const string& word) const
 vector<vector<string>> AnagramDict::get_all_anagrams() const
 {
     /* Your code goes here! */
-    return vector<vector<string>>();
+    vector<vector<string>> ret;
+    vector<string> visited;
+    for (auto& x : dict) {
+        std::cout << x.first << std::endl;
+        if (std::find(visited.begin(), visited.end(), x.first) == visited.end() && x.second.size() > 1) {
+            ret.push_back(x.second);
+            visited.insert(visited.begin() + visited.size(), x.second.begin(), x.second.end());
+        }
+    }
+    return ret;
 }
