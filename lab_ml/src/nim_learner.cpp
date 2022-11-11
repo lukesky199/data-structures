@@ -5,6 +5,7 @@
 
 #include "nim_learner.h"
 #include <ctime>
+#include <random>
 
 
 /**
@@ -25,7 +26,34 @@
  * @param startingTokens The number of starting tokens in the game of Nim.
  */
 NimLearner::NimLearner(unsigned startingTokens) : g_(true, true) {
-    /* Your code goes here! */
+  /* Your code goes here! */
+  // Starting Vertex
+  startingVertex_ = "p1-" + std::to_string(startingTokens);
+  // Graph Helper Function
+  auto createEdges = [this, &startingTokens](unsigned start, unsigned stepSize) {
+    // Don't exceed the number of startingTokens
+    if (start + stepSize > startingTokens)
+      return;
+    // Create Vertices
+    if (!g_.vertexExists("p1-" + std::to_string(start + stepSize)))
+      g_.insertVertex("p1-" + std::to_string(start + stepSize));
+    if (!g_.vertexExists("p2-" + std::to_string(start + stepSize)))
+      g_.insertVertex("p2-" + std::to_string(start + stepSize));
+    // Create Edges
+    g_.insertEdge("p2-" + std::to_string(start + stepSize), "p1-" + std::to_string(start));
+    g_.setEdgeWeight("p2-" + std::to_string(start + stepSize), "p1-" + std::to_string(start), 0);
+    g_.insertEdge("p1-" + std::to_string(start + stepSize), "p2-" + std::to_string(start));
+    g_.setEdgeWeight("p1-" + std::to_string(start + stepSize), "p2-" + std::to_string(start), 0);
+  };
+
+  // Making nodes of end state
+  g_.insertVertex("p1-0");
+  g_.insertVertex("p2-0");
+  for (unsigned i = 0; i < startingTokens; i++) {
+    // Pick Up 1 Token
+    createEdges(i, 1);
+    createEdges(i, 2);
+  }
 }
 
 /**
@@ -39,7 +67,23 @@ NimLearner::NimLearner(unsigned startingTokens) : g_(true, true) {
  */
 std::vector<Edge> NimLearner::playRandomGame() const {
   vector<Edge> path;
- /* Your code goes here! */
+  /* Your code goes here! */
+  std::vector<std::string> player{"p1-", "p2-"};
+  int turn = 1;
+  Vertex curr = startingVertex_;
+  while (std::stoi(curr.substr(3)) > 0) {
+    int step = rand() % 2 + 1;
+
+    std::string next;
+    if (std::stoi(curr.substr(3)) - step < 0)
+      next = player[turn] + "0";
+    else
+      next = player[turn] + std::to_string(std::stoi(curr.substr(3)) - step);
+    
+    path.push_back(g_.getEdge(curr, next));
+    curr = next;
+    turn = (turn + 1) % 2;
+  }
   return path;
 }
 
@@ -60,7 +104,19 @@ std::vector<Edge> NimLearner::playRandomGame() const {
  * @param path A path through the a game of Nim to learn.
  */
 void NimLearner::updateEdgeWeights(const std::vector<Edge> & path) {
- /* Your code goes here! */
+  /* Your code goes here! */
+  std::string winner = path.back().source.substr(0, 2);
+  // std::cout << "WINNER: " << winner << std::endl;
+  for (Edge turn : path) {
+    // std::cout << "SOURCE: " << turn.source << " DEST: " << turn.dest << std::endl;
+    // std::cout << "WEIGHT: " << g_.getEdgeWeight(turn.source, turn.dest) << std::endl;
+    if (turn.source.substr(0, 2) == winner) {
+      g_.setEdgeWeight(turn.source, turn.dest, g_.getEdgeWeight(turn.source, turn.dest) + 1);
+    } else {
+      g_.setEdgeWeight(turn.source, turn.dest, g_.getEdgeWeight(turn.source, turn.dest) - 1);
+    }
+    // std::cout << "WEIGHT: " << g_.getEdgeWeight(turn.source, turn.dest) << std::endl;
+  }
 }
 
 /**
