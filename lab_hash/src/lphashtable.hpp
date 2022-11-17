@@ -4,6 +4,8 @@
  */
 #include "lphashtable.h"
 
+#include <iostream>
+
 template <class K, class V>
 LPHashTable<K, V>::LPHashTable(size_t tsize)
 {
@@ -79,9 +81,19 @@ void LPHashTable<K, V>::insert(K const& key, V const& value)
      * **Do this check *after* increasing elems (but before inserting)!!**
      * Also, don't forget to mark the cell for probing with should_probe!
      */
-
-    (void) key;   // prevent warnings... When you implement this function, remove this line.
-    (void) value; // prevent warnings... When you implement this function, remove this line.
+    elems++;
+    if (shouldResize()) {
+        resizeTable();
+    }
+    unsigned idx = hashes::hash(key, size);
+    for (unsigned i = 0; i < size; i++) {
+        if (table[idx] == nullptr) {
+            should_probe[idx] = true;
+            table[idx] = new std::pair<K, V>(key, value);
+            break;
+        }
+        idx = (idx + 1) % size;
+    }
 }
 
 template <class K, class V>
@@ -90,6 +102,14 @@ void LPHashTable<K, V>::remove(K const& key)
     /**
      * @todo: implement this function
      */
+    int idx = findIndex(key);
+    if (idx == -1) {
+        std::cout << "LMAO" << std::endl;
+        return;
+    }
+    delete table[idx];
+    table[idx] = nullptr;
+    elems--;
 }
 
 template <class K, class V>
@@ -101,7 +121,13 @@ int LPHashTable<K, V>::findIndex(const K& key) const
      *
      * Be careful in determining when the key is not in the table!
      */
-
+    unsigned idx = hashes::hash(key, size);
+    while (should_probe[idx]) {
+        if (table[idx] != nullptr && table[idx]->first == key) {
+            return idx;
+        }
+        idx = (idx + 1) % size;
+    }
     return -1;
 }
 
@@ -159,4 +185,27 @@ void LPHashTable<K, V>::resizeTable()
      *
      * @hint Use findPrime()!
      */
+    
+    std::vector<std::pair<K, V>> temp;
+    for (unsigned int i = 0; i < size; i++) {
+        if (table[i] != nullptr) {
+            temp.push_back(*table[i]);
+            delete table[i];
+        }
+    }
+    size = findPrime(size * 2);
+    delete[] table;
+    delete[] should_probe;
+    table = new std::pair<K, V>*[size];
+    should_probe = new bool[size];
+
+    for (size_t i = 0; i < size; i++) {
+        table[i] = NULL;
+        should_probe[i] = false;
+    }
+    elems = 1;
+
+    for (auto pair : temp) {
+        insert(pair.first, pair.second);
+    }
 }
