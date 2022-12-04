@@ -54,3 +54,16 @@ V2D clean(const V2D & cv, const V2D & sv);
  * @return A 2D vector which each row is a timeslot with all the courses scheduled for that time
  */
 V2D schedule(const V2D &courses, const std::vector<std::string> &timeslots);
+
+/**
+ * helper function
+ * Returns the index of a student in StudentFile
+ * Returns -1 if doesn't exist
+*/
+int getStudentIdx (const std::string & student, const V2D & studentFile);
+
+/**
+ * helper function
+ * Returns an Adjacency List graph
+*/
+void getGraph(const V2D &courses, std::map<std::string, std::vector<std::string>> &graph);
